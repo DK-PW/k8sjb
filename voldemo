@@ -1,20 +1,32 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: ReplicaSet
 metadata:
-  name: springvolume
+  name: frontend
+  labels:
+    app: ui
+    tier: frontend
 spec:
-  containers:
-  - name: bear
-    image: supergiantkir/animals:bear
-    volumeMounts:
-    - name: animals-persistent-storage
-      mountPath: /data/redis
-  - name: moose
-    image: supergiantkir/animals:moose
-    volumeMounts:
-    - name: animals-persistent-storage
-      mountPath: /app/data
-  volumes:
-  - name: animals-persistent-storage
-    hostPath: 
-      path: /tmp/files
+  replicas: 3
+  selector:  
+    matchLabels:
+      tier: frontend
+  template:   
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: bear
+        image: supergiantkir/animals:bear
+        volumeMounts:
+        - name: animals-persistent-storage
+          mountPath: /data/redis
+      - name: moose
+        image: supergiantkir/animals:moose
+        volumeMounts:
+        - name: animals-persistent-storage
+          mountPath: /app/data
+      volumes:
+      - name: animals-persistent-storage
+        hostPath: 
+          path: /tmp/files
